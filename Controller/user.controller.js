@@ -1,20 +1,26 @@
 import { UserData } from "../Models/user.model.js"
 
 const createNewUser = async (req, res) => {
-    const { userName } = req.body;
+    const { userName,password } = req.body;
 
     if (!userName) {
         return res.status(400).send("Invalid userName!");
     }
+    if(!password){
+        return res.status(400).send("Enter correct password!");
+    }
 
     try {
-        const existsUser = await UserData.findOne({ userName });
+        const existsUser = await UserData.findOne({ userName :userName.toLowerCase() });
 
         if (existsUser) {
             return res.status(400).send("User already exists");
         }
 
-        const create_new_user = await UserData.create({ userName });
+        const create_new_user = await UserData.create({
+             userName: userName.toLowerCase(),
+             password:password
+            });
 
         if (!create_new_user) {
             return res.status(500).send("Failed to create user");
@@ -42,7 +48,32 @@ const fetchUserData = async (req, res) => {
     }
 };
 
+const userLogin = async (req, res) => {
+    const { userName,password } = req.body;
+    
+    if (!userName) {
+        return res.status(400).send("Invalid userName!");
+    }
+    if(!password){
+        return res.status(400).send("Enter correct password!");
+    }
+    try {
+        const existsUser = await UserData.findOne({userName:userName.toLowerCase()});
 
+        if(!existsUser){
+            return res.status(400).send("User Not Found!");
+        }
+
+        if(existsUser.password !== password){
+            return res.status(400).send("Enter correct password!");
+        }
+        res.status(200).json({userName:existsUser.userName})
+        
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 
 const addMoneyToUser = async (req, res) => {
     const { userId } = req.params;
@@ -128,5 +159,7 @@ export {
     createNewUser,
     fetchUserData,
     addMoneyToUser,
-    withdrawMoneyFromUser, getSingleUser
+    withdrawMoneyFromUser, 
+    getSingleUser, 
+    userLogin
 }

@@ -3,7 +3,7 @@ import { adminRegister,
     adminLogin
 } from "../Controller/admin.controller.js";
 
-import { createNewUser,fetchUserData, addMoneyToUser, withdrawMoneyFromUser, getSingleUser } from "../Controller/user.controller.js"
+import { createNewUser,fetchUserData, addMoneyToUser, withdrawMoneyFromUser, getSingleUser, userLogin } from "../Controller/user.controller.js"
 
 const router = Router();
 
@@ -18,5 +18,6 @@ router.route("/user/:userId").get(getSingleUser);
 
 router.route("/user/:userId/add").post(addMoneyToUser);
 router.route("/user/:userId/withdraw").post(withdrawMoneyFromUser);
+router.route("/user-login").post(userLogin);
 
 export default router;
